@@ -4,6 +4,8 @@ import numpy as np
 RESTING_HR = 60
 HR_PER_WATT = 0.37
 HR_RESPONSE = 0.03
+BASE_CADENCE = 65
+CADENCE_PER_WATT = 0.1
 
 
 class BikeSimulator:
@@ -22,10 +24,15 @@ class BikeSimulator:
         target_heart_rate = RESTING_HR + HR_PER_WATT * self.power
         self.hr += (target_heart_rate - self.hr) * HR_RESPONSE
         return self.hr + np.random.normal(0,1)
+    
+    def read_cadence(self):
+        cadence = BASE_CADENCE + CADENCE_PER_WATT * self.power
+        return cadence + np.random.normal(0,2)
+
 
     
 if __name__ == "__main__":
     bike = BikeSimulator()
     for _ in range(100):
-        print(round(bike.read_power(), 2), round(bike.read_hr(), 2))
+        print(round(bike.read_power(), 2), round(bike.read_hr(), 2), round(bike.read_cadence(), 2))
     
