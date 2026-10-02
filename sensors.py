@@ -8,6 +8,9 @@ BASE_CADENCE = 65
 CADENCE_PER_WATT = 0.1
 AIR_DENSITY = 1.2
 CDA = 0.3
+METERS_PER_DEG_LAT = 111000
+GPS_DT = 1.0
+
 
 class BikeSimulator:
     def __init__(self):
@@ -35,11 +38,24 @@ class BikeSimulator:
         speed_ms = (2 * self.power / (AIR_DENSITY * CDA)) ** (1/3)
         self.speed = speed_ms * 3.6
         return self.speed + np.random.normal(0, 0.5)
+    
+    def read_gps(self):
+        distance = (self.speed / 3.6) * GPS_DT
+        self.lat += distance / METERS_PER_DEG_LAT
+        noise = np.random.normal(0,3) / METERS_PER_DEG_LAT
+        return self.lat + noise, self.lon
+    
+
 
 
     
 if __name__ == "__main__":
     bike = BikeSimulator()
     for _ in range(100):
-        print(round(bike.read_power(), 2), round(bike.read_hr(), 2), round(bike.read_cadence(), 2), round(bike.read_speed(), 2))
+        power = bike.read_power()
+        hr = bike.read_hr()
+        cadence = bike.read_cadence()
+        speed = bike.read_speed()
+        lat, lon = bike.read_gps()
+        print(f"{power:.2f} W - {hr:.2f} bpm - {cadence:.2f} rpm - {speed:.2f} km/h - {lat:.6f}, {lon:.6f}")
     
