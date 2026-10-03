@@ -31,7 +31,7 @@ def publisher_loop(client):
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
-    print("Bağlandı:", reason_code)
+    print("Connected:", reason_code)
 
 
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
@@ -68,4 +68,4 @@ except KeyboardInterrupt:
         t.join()
     client.loop_stop()
     client.disconnect()
-    print("Program Temiz Kapandı")
+    print("Shut down cleanly")
