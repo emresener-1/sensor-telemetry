@@ -13,6 +13,8 @@ from config import BROKER, PORT, TOPIC
 
 stop = threading.Event()
 msg_q = queue.Queue()
+msg_count = 0
+count_lock = threading.Lock()
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -20,7 +22,14 @@ def on_connect(client, userdata, flags, reason_code, properties):
     client.subscribe(TOPIC)
 
 
+def on_disconnect(client, userdata, flags, reason_code, properties):
+    print("Disconnected:", reason_code)
+
+
 def on_message(client, userdata, message):
+    global msg_count
+    with count_lock:
+        msg_count += 1
     data = json.loads(message.payload)
     msg_q.put(data)
 
@@ -61,6 +70,8 @@ def writer_loop():
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 client.on_connect = on_connect
 client.on_message = on_message
+client.on_disconnect = on_disconnect
+client.reconnect_delay_set(min_delay=1, max_delay=30)
 client.connect(BROKER, PORT)
 client.loop_start()
 
@@ -71,6 +82,10 @@ writer_thread.start()
 try:
     while True:
         time.sleep(1)
+        with count_lock:
+            n = msg_count
+            msg_count = 0
+        print(f"{n} msg/s")
 except KeyboardInterrupt:
     stop.set()
     writer_thread.join()
