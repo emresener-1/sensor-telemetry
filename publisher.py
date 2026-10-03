@@ -6,11 +6,7 @@ import time
 import paho.mqtt.client as mqtt
 
 from sensors import BikeSimulator
-
-
-BROKER = "test.mosquitto.org"
-PORT = 1883
-TOPIC = "emre/telemetry/bike"
+from config import BROKER, PORT, TOPIC
 
 
 stop = threading.Event()
