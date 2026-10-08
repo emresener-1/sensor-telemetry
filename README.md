@@ -15,8 +15,8 @@ sensors (threads) --> queue --> publisher --> MQTT broker --> subscriber --> que
     pip install -r requirements.txt
 
 
-Terminal 1: "python subscriber.py"
-Terminal 2: "python publisher.py"
+- Terminal 1: "python subscriber.py"
+- Terminal 2: "python publisher.py"
 
 Run for a few minutes, stop both with Ctrl + C, then open "analysis.ipynb".
 
